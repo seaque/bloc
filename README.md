@@ -1,3 +1,7 @@
+### This isn't working. Why?
+
+Here's the thing. I had never really used BLoC, Cubit or bootstrap. This has been a good learning experince. Though this application, to be honest, seems quite thorough with its examples. I still can't wrap my head around why they use BLoC for local data. Anyway, I still managed to bring something up as good as I can. And practically, it \*should\* work. I'll examine further when I got a different kind of error, which in itself is progress.
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/felangel/bloc/master/docs/assets/bloc_logo_full.png" height="100" alt="Bloc" />
 </p>
