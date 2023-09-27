@@ -28,3 +28,12 @@ final class EditTodoDescriptionChanged extends EditTodoEvent {
 final class EditTodoSubmitted extends EditTodoEvent {
   const EditTodoSubmitted();
 }
+
+final class EditTodoCollectionChanged extends EditTodoEvent {
+  const EditTodoCollectionChanged(this.collection);
+
+  final Collection collection;
+
+  @override
+  List<Object> get props => [collection];
+}

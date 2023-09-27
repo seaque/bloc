@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:collections_api/collections_api.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todos_repository/todos_repository.dart';
 
@@ -9,16 +10,19 @@ class EditTodoBloc extends Bloc<EditTodoEvent, EditTodoState> {
   EditTodoBloc({
     required TodosRepository todosRepository,
     required Todo? initialTodo,
+    required Collection? initialCollection,
   })  : _todosRepository = todosRepository,
         super(
           EditTodoState(
             initialTodo: initialTodo,
             title: initialTodo?.title ?? '',
             description: initialTodo?.description ?? '',
+            collection: initialCollection,
           ),
         ) {
     on<EditTodoTitleChanged>(_onTitleChanged);
     on<EditTodoDescriptionChanged>(_onDescriptionChanged);
+    on<EditTodoCollectionChanged>(_onCollectionChanged);
     on<EditTodoSubmitted>(_onSubmitted);
   }
 
@@ -38,6 +42,13 @@ class EditTodoBloc extends Bloc<EditTodoEvent, EditTodoState> {
     emit(state.copyWith(description: event.description));
   }
 
+  void _onCollectionChanged(
+    EditTodoCollectionChanged event,
+    Emitter<EditTodoState> emit,
+  ) {
+    emit(state.copyWith(collection: event.collection));
+  }
+
   Future<void> _onSubmitted(
     EditTodoSubmitted event,
     Emitter<EditTodoState> emit,
@@ -46,6 +57,7 @@ class EditTodoBloc extends Bloc<EditTodoEvent, EditTodoState> {
     final todo = (state.initialTodo ?? Todo(title: '')).copyWith(
       title: state.title,
       description: state.description,
+      collection: state.collection,
     );
 
     try {

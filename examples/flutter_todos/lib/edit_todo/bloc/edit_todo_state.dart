@@ -15,12 +15,14 @@ final class EditTodoState extends Equatable {
     this.initialTodo,
     this.title = '',
     this.description = '',
+    this.collection,
   });
 
   final EditTodoStatus status;
   final Todo? initialTodo;
   final String title;
   final String description;
+  final Collection? collection;
 
   bool get isNewTodo => initialTodo == null;
 
@@ -29,15 +31,23 @@ final class EditTodoState extends Equatable {
     Todo? initialTodo,
     String? title,
     String? description,
+    Collection? collection,
   }) {
     return EditTodoState(
       status: status ?? this.status,
       initialTodo: initialTodo ?? this.initialTodo,
       title: title ?? this.title,
       description: description ?? this.description,
+      collection: collection ?? this.collection,
     );
   }
 
   @override
-  List<Object?> get props => [status, initialTodo, title, description];
+  List<Object?> get props => [
+        status,
+        initialTodo,
+        title,
+        description,
+        collection,
+      ];
 }

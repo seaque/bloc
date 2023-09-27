@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_todos/collections_overview/bloc/collections_overview_bloc.dart';
 import 'package:flutter_todos/edit_todo/edit_todo.dart';
 import 'package:flutter_todos/l10n/l10n.dart';
 import 'package:todos_repository/todos_repository.dart';
+import 'package:collections_repository/collections_repository.dart';
 
 class EditTodoPage extends StatelessWidget {
   const EditTodoPage({super.key});
@@ -16,6 +18,7 @@ class EditTodoPage extends StatelessWidget {
         create: (context) => EditTodoBloc(
           todosRepository: context.read<TodosRepository>(),
           initialTodo: initialTodo,
+          initialCollection: initialTodo?.collection,
         ),
         child: const EditTodoPage(),
       ),
@@ -25,9 +28,7 @@ class EditTodoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<EditTodoBloc, EditTodoState>(
-      listenWhen: (previous, current) =>
-          previous.status != current.status &&
-          current.status == EditTodoStatus.success,
+      listenWhen: (previous, current) => previous.status != current.status && current.status == EditTodoStatus.success,
       listener: (context, state) => Navigator.of(context).pop(),
       child: const EditTodoView(),
     );
@@ -46,15 +47,12 @@ class EditTodoView extends StatelessWidget {
     );
     final theme = Theme.of(context);
     final floatingActionButtonTheme = theme.floatingActionButtonTheme;
-    final fabBackgroundColor = floatingActionButtonTheme.backgroundColor ??
-        theme.colorScheme.secondary;
+    final fabBackgroundColor = floatingActionButtonTheme.backgroundColor ?? theme.colorScheme.secondary;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isNewTodo
-              ? l10n.editTodoAddAppBarTitle
-              : l10n.editTodoEditAppBarTitle,
+          isNewTodo ? l10n.editTodoAddAppBarTitle : l10n.editTodoEditAppBarTitle,
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -62,22 +60,20 @@ class EditTodoView extends StatelessWidget {
         shape: const ContinuousRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32)),
         ),
-        backgroundColor: status.isLoadingOrSuccess
-            ? fabBackgroundColor.withOpacity(0.5)
-            : fabBackgroundColor,
-        onPressed: status.isLoadingOrSuccess
-            ? null
-            : () => context.read<EditTodoBloc>().add(const EditTodoSubmitted()),
-        child: status.isLoadingOrSuccess
-            ? const CupertinoActivityIndicator()
-            : const Icon(Icons.check_rounded),
+        backgroundColor: status.isLoadingOrSuccess ? fabBackgroundColor.withOpacity(0.5) : fabBackgroundColor,
+        onPressed: status.isLoadingOrSuccess ? null : () => context.read<EditTodoBloc>().add(const EditTodoSubmitted()),
+        child: status.isLoadingOrSuccess ? const CupertinoActivityIndicator() : const Icon(Icons.check_rounded),
       ),
       body: const CupertinoScrollbar(
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
-              children: [_TitleField(), _DescriptionField()],
+              children: [
+                _TitleField(),
+                _DescriptionField(),
+                _CollectionField(),
+              ],
             ),
           ),
         ),
@@ -140,6 +136,41 @@ class _DescriptionField extends StatelessWidget {
       ],
       onChanged: (value) {
         context.read<EditTodoBloc>().add(EditTodoDescriptionChanged(value));
+      },
+    );
+  }
+}
+
+class _CollectionField extends StatelessWidget {
+  const _CollectionField({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    final state = context.watch<EditTodoBloc>().state;
+    final hintText = state.initialTodo?.collection?.id;
+
+    return DropdownButtonFormField(
+      key: const Key('editTodoView_collection_dropdownButtonFormField'),
+      decoration: InputDecoration(
+        enabled: !state.status.isLoadingOrSuccess,
+        labelText: "Edit Collection",
+        hintText: hintText,
+      ),
+      value: state.collection,
+      items: context
+          .read<CollectionsOverviewBloc>()
+          .state
+          .collections
+          .map((collection) => DropdownMenuItem<Collection>(
+                key: Key(collection.id),
+                value: collection,
+                child: Text(collection.title),
+              ))
+          .toList(),
+      onChanged: (value) {
+        context.read<EditTodoBloc>().add(EditTodoCollectionChanged(value!));
       },
     );
   }
