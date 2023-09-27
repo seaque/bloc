@@ -9,6 +9,8 @@ environment:
 dependencies:
   todos_api:
     path: ../todos_api
+  collections_api:
+    path: ../collections_api
 
 dev_dependencies:
   mocktail: ^1.0.0
