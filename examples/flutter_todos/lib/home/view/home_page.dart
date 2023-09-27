@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_todos/edit_todo/edit_todo.dart';
+import 'package:flutter_todos/edit_collection/edit_collection.dart';
 import 'package:flutter_todos/home/home.dart';
 import 'package:flutter_todos/stats/stats.dart';
 import 'package:flutter_todos/todos_overview/todos_overview.dart';
+import 'package:flutter_todos/collections_overview/collections_overview.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -27,9 +29,13 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       body: IndexedStack(
         index: selectedTab.index,
-        children: const [TodosOverviewPage(), StatsPage()],
+        children: const [
+          TodosOverviewPage(),
+          StatsPage(),
+          CollectionsOverviewPage(),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         key: const Key('homeView_addTodo_floatingActionButton'),
         onPressed: () => Navigator.of(context).push(EditTodoPage.route()),
@@ -49,6 +55,11 @@ class HomeView extends StatelessWidget {
               groupValue: selectedTab,
               value: HomeTab.stats,
               icon: const Icon(Icons.show_chart_rounded),
+            ),
+            _HomeTabButton(
+              groupValue: selectedTab,
+              value: HomeTab.collections,
+              icon: const Icon(Icons.collections_rounded),
             ),
           ],
         ),
@@ -73,8 +84,7 @@ class _HomeTabButton extends StatelessWidget {
     return IconButton(
       onPressed: () => context.read<HomeCubit>().setTab(value),
       iconSize: 32,
-      color:
-          groupValue != value ? null : Theme.of(context).colorScheme.secondary,
+      color: groupValue != value ? null : Theme.of(context).colorScheme.secondary,
       icon: icon,
     );
   }
