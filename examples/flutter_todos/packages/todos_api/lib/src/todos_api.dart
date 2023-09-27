@@ -1,3 +1,4 @@
+import 'package:collections_api/collections_api.dart';
 import 'package:todos_api/todos_api.dart';
 
 /// {@template todos_api}
@@ -30,6 +31,12 @@ abstract class TodosApi {
   ///
   /// Returns the number of updated todos.
   Future<int> completeAll({required bool isCompleted});
+
+  /// Save [todo] in a collection.
+  /// 
+  /// If a [collection] with the same id already exists, it will be replaced.
+  Future<void> saveTodoInCollection(Todo todo, Collection collection);
+
 }
 
 /// Error thrown when a [Todo] with a given id is not found.

@@ -1,3 +1,4 @@
+import 'package:collections_api/src/models/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
@@ -9,7 +10,7 @@ part 'todo.g.dart';
 /// {@template todo_item}
 /// A single `todo` item.
 ///
-/// Contains a [title], [description] and [id], in addition to a [isCompleted]
+/// Contains a [title], [description], [collection] and [id], in addition to a [isCompleted]
 /// flag.
 ///
 /// If an [id] is provided, it cannot be empty. If no [id] is provided, one
@@ -27,6 +28,7 @@ class Todo extends Equatable {
     required this.title,
     String? id,
     this.description = '',
+    this.collection,
     this.isCompleted = false,
   })  : assert(
           id == null || id.isNotEmpty,
@@ -49,10 +51,16 @@ class Todo extends Equatable {
   /// Defaults to an empty string.
   final String description;
 
+  /// The collection that the `todo` belongs to.
+  /// 
+  /// Defaults to null.
+  final Collection? collection;
+
   /// Whether the `todo` is completed.
   ///
   /// Defaults to `false`.
   final bool isCompleted;
+
 
   /// Returns a copy of this `todo` with the given values updated.
   ///
@@ -61,12 +69,14 @@ class Todo extends Equatable {
     String? id,
     String? title,
     String? description,
-    bool? isCompleted,
+    String? collectionId,
+    bool? isCompleted, Collection? collection,
   }) {
     return Todo(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
+      collection: collection ?? this.collection,
       isCompleted: isCompleted ?? this.isCompleted,
     );
   }
@@ -78,5 +88,5 @@ class Todo extends Equatable {
   JsonMap toJson() => _$TodoToJson(this);
 
   @override
-  List<Object> get props => [id, title, description, isCompleted];
+  List<dynamic> get props => [id, title, description, collection, isCompleted];
 }
